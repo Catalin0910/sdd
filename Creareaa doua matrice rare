@@ -1,0 +1,435 @@
+#include "pch.h"
+#include<stdio.h>
+#include<stdlib.h>
+
+//definirie strucutura matrice rara
+struct MatriceRara 
+{
+	int linie;
+	int coloana;
+	double valoare;
+};
+double** citire_matricetema_fisier(FILE* fisier, int& nr_linii, int& nr_coloane)
+{
+	double** matricetema;
+	if (fisier != NULL && !feof(fisier))
+	{
+		//de aici citesc datele din fisier
+		fscanf_s(fisier, "%d", &nr_linii);
+		fscanf_s(fisier, "%d", &nr_coloane);
+		//acum vom aloca dinamic matricea
+		matricetema = (double**)malloc(sizeof(double*)*nr_linii);
+		for (int i = 0; i < nr_linii; i++)
+		{
+			matricetema[i] = (double*)malloc(sizeof(double)*nr_coloane);
+		}
+		//acum fac citirea din matrice
+		for (int i = 0; i < nr_linii; i++)
+		{
+			for (int j = 0; j < nr_coloane; j++)
+			{
+				fscanf_s(fisier, "%lf", &matricetema[i][j]);
+			}
+		}
+		fclose(fisier);
+		return matricetema;
+	}
+}
+
+int calculare_dimensiune_mr(double** matricetema, int nr_linii, int nr_coloane)
+{
+	int dim = 0;
+	for (int i = 0; i < nr_linii; i++)
+	{
+		for (int j = 0; j < nr_coloane; j++)
+		{
+			//aflamnumarulelementelornule
+			if (matricetema[i][j] == 0)
+			{
+				dim++;
+			}
+		}
+	}
+	if (dim > nr_linii*nr_coloane * 2 / 3)
+	{
+		return nr_linii * nr_coloane - dim;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+MatriceRara* conversire_catre_mr(double** matricetema, int nr_linii, int nr_coloane, int& dim)
+{
+	MatriceRara* mr;
+	//se calculeaza dimensiunea matrii rare
+	//daca dim, initializat anterior, este 0, atunci nu avem matrice rara
+	dim = calculare_dimensiune_mr(matricetema, nr_linii, nr_coloane);
+	if (dim > 0)
+	{
+		mr = (MatriceRara*)malloc(sizeof(MatriceRara)*dim);
+		int k = 0;
+		for (int i = 0; i < nr_linii; i++)
+		{
+			for (int j = 0; j < nr_coloane; j++)
+			{
+				if (matricetema[i][j] != 0)
+				{
+					mr[k].linie = i;
+					mr[k].coloana = j;
+					mr[k].valoare = matricetema[i][j];
+					k++;
+				}
+			}
+		}
+		return mr;
+	}
+}
+
+void afisare_mr(MatriceRara* mr, int dim)
+{
+	printf("\nMatricea rara adugata este: \n");
+	printf("\nAfisare matrice rara\n");
+	for (int i = 0; i < dim; i++)
+	{
+		printf("\nMatrice pozitie %d", i);
+		printf("\nlinia %d, coloana %d, valoare %f", mr[i].linie, mr[i].coloana, mr[i].valoare);
+	}
+}
+
+void dezalocare(double ** matricetema, int nr_linii, MatriceRara* mr, int dim)
+{
+	if (nr_linii > 0)
+	{
+		for (int i = 0; i < nr_linii; i++)
+		{
+			free(matricetema[i]);
+		}
+		free(matricetema);
+	}
+	if (dim > 0)
+	{
+		free(mr);
+	}
+}
+struct MatriceRara1
+{
+	int linie1;
+	int coloana1;
+	double valoare1;
+};
+double** citire_matrice2_fisier1(FILE* fisier1, int& nr_linii1, int& nr_coloane1)
+{
+	double** matrice2;
+	if (fisier1 != NULL && !feof(fisier1))
+	{
+		//de aici citesc datele din fisier
+		fscanf_s(fisier1, "%d", &nr_linii1);
+		fscanf_s(fisier1, "%d", &nr_coloane1);
+		//acum vom aloca dinamic matricea
+		matrice2 = (double**)malloc(sizeof(double*)*nr_linii1);
+		for (int i = 0; i < nr_linii1; i++)
+		{
+			matrice2[i] = (double*)malloc(sizeof(double)*nr_coloane1);
+		}
+		//acum fac citirea din matrice
+		for (int i = 0; i < nr_linii1; i++)
+		{
+			for (int j = 0; j < nr_coloane1; j++)
+			{
+				fscanf_s(fisier1, "%lf", &matrice2[i][j]);
+			}
+		}
+		fclose(fisier1);
+		return matrice2;
+	}
+}
+
+int calculare_dimensiune_mr1(double** matrice2, int nr_linii1, int nr_coloane1)
+{
+	int dim1 = 0;
+	for (int i = 0; i < nr_linii1; i++)
+	{
+		for (int j = 0; j < nr_coloane1; j++)
+		{
+			//aflamnumarulelementelornule
+			if (matrice2[i][j] == 0)
+			{
+				dim1++;
+			}
+		}
+	}
+	if (dim1 > nr_linii1*nr_coloane1 * 2 / 3)
+	{
+		return nr_linii1 * nr_coloane1 - dim1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+MatriceRara1* conversire_catre_mr1(double** matrice2, int nr_linii1, int nr_coloane1, int& dim1)
+{
+	MatriceRara1* mr1;
+	//se calculeaza dimensiunea matrii rare
+	//daca dim, initializat anterior, este 0, atunci nu avem matrice rara
+	dim1 = calculare_dimensiune_mr1(matrice2, nr_linii1, nr_coloane1);
+	if (dim1 > 0)
+	{
+		mr1 = (MatriceRara1*)malloc(sizeof(MatriceRara1)*dim1);
+		int k = 0;
+		for (int i = 0; i < nr_linii1; i++)
+		{
+			for (int j = 0; j < nr_coloane1; j++)
+			{
+				if (matrice2[i][j] != 0)
+				{
+					mr1[k].linie1 = i;
+					mr1[k].coloana1 = j;
+					mr1[k].valoare1 = matrice2[i][j];
+					k++;
+				}
+			}
+		}
+		return mr1;
+	}
+}
+
+void afisare_mr1(MatriceRara1* mr1, int dim1)
+{
+	printf("\nMatricea rara 2 adugata este: \n");
+	printf("\nAfisare matrice rara 2\n");
+	for (int i = 0; i < dim1; i++)
+	{
+		printf("\nMatrice pozitie %d", i);
+		printf("\nlinia %d, coloana %d, valoare %f", mr1[i].linie1, mr1[i].coloana1, mr1[i].valoare1);
+	}
+}
+
+void dezalocare1(double ** matrice2, int nr_linii1, MatriceRara1* mr1, int dim1)
+{
+	if (nr_linii1 > 0)
+	{
+		for (int i = 0; i < nr_linii1; i++)
+		{
+			free(matrice2[i]);
+		}
+		free(matrice2);
+	}
+	if (dim1 > 0)
+	{
+		free(mr1);
+	}
+}
+struct MatriceRarasuma
+{
+	int linie2;
+	int coloana2;
+	double valoare2;
+};
+double** citire_matricesuma_fisier2(FILE* fisier2, int& nr_linii2, int& nr_coloane2)
+{
+	double** matricesuma;
+	if (fisier2 != NULL && !feof(fisier2))
+	{
+		fscanf_s(fisier2, "%d", &nr_linii2);
+		fscanf_s(fisier2, "%d", &nr_coloane2);
+		matricesuma = (double**)malloc(sizeof(double*)*nr_linii2);
+		for (int i = 0; i < nr_linii2; i++)
+		{
+			matricesuma[i] = (double*)malloc(sizeof(double)*nr_coloane2);
+		}
+		for (int i = 0; i < nr_linii2; i++)
+		{
+			for (int j = 0; j < nr_coloane2; j++)
+			{
+				fscanf_s(fisier2, "%lf", &matricesuma[i][j]);
+			}
+		}
+		fclose(fisier2);
+		return matricesuma;
+	}
+}
+int calculare_dimensiune_mr2(double** matricesuma, int nr_linii2, int nr_coloane2)
+{
+	int dim2 = 0;
+	for (int i = 0; i < nr_linii2; i++)
+	{
+		for (int j = 0; j < nr_coloane2; j++)
+		{
+			if (matricesuma[i][j] == 0)
+			{
+				dim2++;
+			}
+		}
+	}
+	if (dim2 > nr_linii2*nr_coloane2 * 2 / 3)
+	{
+		return nr_linii2 * nr_coloane2 - dim2;
+	}
+	else
+	{
+		return 0;
+	}
+}
+MatriceRarasuma* conversie_catre_mr2(double** matricesuma, int nr_linii2, int nr_coloane2, int& dim2)
+{
+	MatriceRarasuma* mr2;
+	dim2 = calculare_dimensiune_mr2(matricesuma, nr_linii2, nr_coloane2);
+	if (dim2 > 0)
+	{
+		mr2 = (MatriceRarasuma*)malloc(sizeof(MatriceRarasuma)*dim2);
+		int k = 0;
+		for (int i = 0; i < nr_linii2; i++)
+		{
+			for (int j = 0; j < nr_coloane2; j++)
+			{
+				if (matricesuma[i][j] != 0)
+				{
+					mr2[k].linie2 = i;
+					mr2[k].coloana2 = j;
+					mr2[k].valoare2 = matricesuma[i][j];
+					k++;
+				}
+			}
+		}
+		return mr2;
+	}
+}
+int suma_matrice_rare(double** matricesuma, int nr_linii2, int nr_coloane2)
+{
+	int dimsuma = 0;
+	for (int i = 0; i < nr_linii2; i++)
+	{
+		for (int j = 0; j < nr_coloane2; j++)
+		{
+			if (matricesuma[i][j] == 0)
+			{
+				dimsuma++;
+			}
+		}
+	}
+	if (dimsuma > nr_linii2*nr_coloane2 * 2 / 3)
+	{
+		return nr_linii2 * nr_coloane2 - dimsuma;
+	}
+	else
+	{
+		return 0;
+	}
+}
+MatriceRarasuma* mr2_adunare_matrice(MatriceRara* mr, int& dim, MatriceRara1* mr1, int& dim1, int& dimsuma, double** matricesuma, int nr_linii2, int nr_coloane2)
+{
+	MatriceRarasuma* mr2;
+	int k = 0;
+	mr2 = (MatriceRarasuma*)malloc(sizeof(MatriceRarasuma)*dimsuma);
+	if (dim < dim1)
+	{
+		for (int i = 0; i < nr_linii2; i++)
+		{
+			for (int j = 0; j < nr_coloane2; j++)
+			{
+				mr2[i].linie2 = mr[k].linie + mr1[k].linie1;
+				mr2[i].coloana2 = mr[k].coloana + mr1[k].coloana1;
+				mr2[i].valoare2 = mr[k].valoare + mr1[k].valoare1;
+				dimsuma = dim + dim1;
+			}
+		}
+		/*mr2[k].linie2 = mr[k].linie+mr1[k].linie1;
+		mr2[k].coloana2 = mr[k].coloana+mr1[k].coloana1;
+		mr2[k].valoare2 = mr[k].valoare+mr1[k].valoare1;*/
+	}
+	else
+	{
+		return 0;
+	}
+}
+void afisare_matricesuma(MatriceRarasuma* mr2, int dimsuma, MatriceRara* mr, MatriceRara1* mr1)
+{
+	printf("\n afisare matrice rara suma\n");
+	for (int i = 0; i < dimsuma; i++)
+	{
+		printf("\nMatrice pozitie %d", i);
+		printf("\nlinia %d, coloana %d, valoare %f" ,mr[i].linie + mr1[i].linie1, mr[i].coloana + mr1[i].coloana1, mr[i].valoare + mr1[i].valoare1);
+	}
+}
+void dezalocare2(double** matricesuma, int nr_linii2, MatriceRarasuma* mr2, int dim2)
+{
+	if (nr_linii2 > 0)
+	{
+		for (int i = 0; i < nr_linii2; i++)
+		{
+			free(matricesuma[i]);
+		}
+		free(matricesuma);
+	}
+	if (dim2 > 0)
+	{
+		free(mr2);
+	}
+}
+
+
+
+
+void main()
+{
+	int nr_linii;
+	int nr_coloane;
+	int nr_linii1, nr_coloane1;
+	int nr_linii2, nr_coloane2;
+	FILE* fisier;
+	FILE* fisier1;
+	FILE* fisier2;
+	fopen_s(&fisier, "matricetema.txt", "r");
+	fopen_s(&fisier1, "matrice2.txt", "r");
+	fopen_s(&fisier2, "suma.txt", "r");
+	double** matricetema = citire_matricetema_fisier(fisier, nr_linii, nr_coloane);
+	double** matrice2 = citire_matrice2_fisier1(fisier1, nr_linii1, nr_coloane1);
+	double** matricesuma=citire_matricesuma_fisier2(fisier2,nr_linii2,nr_coloane2);
+	int dim = 0;
+	int dim1 = 0;
+	int dimsuma = 0;
+	MatriceRara* mr = conversire_catre_mr(matricetema, nr_linii, nr_coloane, dim);
+	if (dim > 0)
+	{
+		afisare_mr(mr, dim);
+	}
+	else
+	{
+		printf("\nNu avem matrice rara existenta\n");
+	}
+	dezalocare(matricetema, nr_linii, mr, dim);
+	MatriceRara1* mr1 = conversire_catre_mr1(matrice2, nr_linii1, nr_coloane1, dim1);
+	if (dim1 > 0)
+	{
+		afisare_mr1(mr1, dim1);
+	}
+	else
+	{
+		printf("\nMatricea 2 nu este rara");
+	}
+	dezalocare1(matrice2, nr_linii1, mr1, dim1);
+	//MatriceRarasuma* mr2 = conversie_catre_mr2(matricesuma, nr_linii2, nr_coloane2, dimsuma);
+	//if (dimsuma > 0)
+	//{
+	//	afisare_matricesuma(mr2, dimsuma);
+	//}
+	//else
+	//{
+	//	printf("\nSuma nu a fost realizata\n");
+	//}
+	MatriceRarasuma* mr2 = mr2_adunare_matrice(mr, dim, mr1, dim1, dimsuma, matricesuma, nr_linii2, nr_coloane2);
+	if (dimsuma > 0)
+	{
+		afisare_matricesuma(mr2, dimsuma, mr, mr1);
+	}
+	else
+	{
+		printf("\nSuma nu a fost realizata\n");
+	}
+}
+
+
