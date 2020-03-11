@@ -1,0 +1,341 @@
+#include "pch.h"
+#include <iostream>
+#include<stdlib.h>
+#include<string.h>
+//lista simpla inlantuita
+//la liste trebuie sa tinem minte cine este primul element
+//nu se lucreaza cu valoarea la liste, se foloseste doar adresa care nu trebuie sa fie modifcicata pe parcursul parcurgerii
+//-> se foloseste pentru pointeri
+//nod este alta structura
+//nod*-> (sagetutata este da mi si mie, asta face)
+//-> se mai numeste de referire
+struct angajat {
+	int cod;
+	char* nume;
+	float salariu;
+};
+
+struct nod
+{
+	angajat info;
+	nod* next; //pointer catre urmatoarea structura de tip nod
+};
+
+angajat citire_angajat_tastatura()
+{
+	angajat a;
+	printf("\nCitire angajat:\n");
+	printf("\nCod: ");
+	scanf_s("%d", &a.cod);
+	printf("\nNume: ");
+	getchar(); //getchar() citeste cate un carcter de la tastatura, iar putchar scrie un caracter
+	char buf[30];
+	gets_s(buf, 30);
+	int dim = strlen(buf) + 1; //strlen returneaza lungimea unui sir de caractere
+	a.nume = (char*)malloc(sizeof(char)*dim);
+	strcpy_s(a.nume, dim, buf);
+	printf("\nSalariu: ");
+	scanf_s("%f", &a.salariu);
+	return a;
+}
+
+nod* creare_lista_circulara()
+{
+	nod*cap = NULL; //initializez capul listei
+	int nr_el = 0; //numarul de elemente din lista
+	printf("\nIntroduceti numarul de elemente: ");
+	scanf_s("%d", &nr_el); //preiau valoarea elementelor din stack, nu se incarca direct pe heap ca e referinta
+	if (nr_el > 0)
+	{
+		cap = (nod*)malloc(sizeof(nod));
+		cap->next = NULL;
+		cap->info = citire_angajat_tastatura();
+		nod*cursor, *nou;
+		cursor = cap;
+		for (int i = 0; i < nr_el; i++)
+		{
+			nou = (nod*)malloc(sizeof(nod));
+			nou->next = NULL;
+			nou->info = citire_angajat_tastatura();
+			cursor->next = nou;
+			cursor = nou;
+		}
+		cursor->next = cap; //cursorul reprezinta capatul al listei
+	}
+	return cap;
+}
+nod* inserare_elemente_circulare(nod* cap, angajat info)
+{
+	if (cap = NULL)
+	{
+		cap = (nod*)malloc(sizeof(nod));
+		cap->info = info;
+		//diferenta
+		cap->next = cap;
+	}
+	else
+	{
+		nod* cursor = cap;
+		while (cursor->next != cap)
+		{
+			cursor = cursor->next;
+		}
+		nod* nou = (nod*)malloc(sizeof(nod));
+		nou->next = cap;
+		nou->info = info;
+		cursor->next = nou;
+	}
+	return cap;
+}
+
+nod* stergere_elemente_circulare(nod* cap)
+{
+	if (cap == NULL)
+	{
+		return NULL; //daca valoarea ultimului nod este null, il sterg
+	}
+	else if (cap->next = cap)
+	{
+		free(cap); //eliberez memoria alocata si 
+		return NULL; //returnez null
+	}
+	else
+	{
+		nod* cursor = cap; //cursorul ajunge pe capatul listei
+		while (cursor->next != cap) //daca e diferit de capatul listei null
+		{
+			cursor = cursor->next; //trece la urmatorul nod
+		}
+		nod* ultim = cursor->next; //ultimul nod
+		cursor->next = cap; //primeste valoarea capatului, adica null, ca de aia facem stergerea
+		free(ultim); //eliberez memoria
+		return cap; //returnez valorile ramase
+	}
+}
+
+void traversare_circulara(nod* cap)
+{
+	printf("\nAfisare lista\n");
+	nod* cursor;
+	cursor = cap;
+	do
+	{
+		printf("\n Cod: %d; Nume: %s, Salariu: %5.2f", cursor->info.cod, cursor->info.nume, cursor->info.salariu);
+			cursor->next = cursor;
+	} while (cursor != cap);
+}
+
+nod* creare_lista()
+{
+	nod*cap = NULL;//initializam capatul listei. OBS: Niciodata sa nu pierdem lagatura capatului, pentru a nu pierde constructia
+	int nr_el = 0;
+	printf("\nIntroduceti numarul de elemente: ");
+	scanf_s("%d", &nr_el);
+	if (nr_el > 0)
+	{
+		//initializam pointerul de tip nod corespunzator primului element din lista
+		cap = (nod*)malloc(sizeof(nod));//alocare spatiu de memorie pentru capul listei
+		cap->next = NULL;//urmatorul element din lista este initializat cu NULL
+		cap->info = citire_angajat_tastatura();//se ataseaza primului nod (cap) informatia dorita
+		nod* cursor, *nou;
+		//orice parcurgere a listei se facu cu ajutorul unui alt pointer, asfel incat sa pastram tot timpul primul element
+		//variabila cursor are ca scop parcurgerea listei de la inceput pana la final
+		cursor = cap;
+		//adugam restul elementelor din lista. Tinem cont ca am initializat primul element al listei, prin urmare iteratia for-ului
+		for (int i = 1; i < nr_el; i++)
+		{
+			//se aloca spatiu in memorie pentru noul element din lista
+			nou = (nod*)malloc(sizeof(nod));
+			//urmatorul element pe care-l pointez este NULL
+			nou->next = NULL;
+			//se adauga informatia dorita in nodul initializat
+			nou->info = citire_angajat_tastatura();
+			//se ataseaza noul element ca fiind urmatorul in lista
+			cursor->next = cap;
+			//cursorul isi schimba pozitia pe ultimul element al listei
+			cursor = cap;
+		}
+	}
+	return cap;
+}
+void traversare_lista(nod* cap)
+{
+	printf("\nAfisare lista\n");
+	nod* cursor;
+	cursor = cap;//se foloseste tot o variabila de tipul capului (cursor) pentru a asigura parcurgerea acestuia
+	while (cursor)
+	{
+		//se parcurse lista pana cand cursorul devine NULL
+		printf("\nCod: %d, Nume: %s, Salariu: %5.2f", cursor->info.cod, cursor->info.nume, cursor->info.salariu);
+		cursor = cursor->next;//mutam pointerul catre urmatorul element din lista. 'next' contine adresa urmatorului element din lista
+	}
+}
+nod* inserare_element(nod* cap, angajat info)
+{
+	//prima data verificam daca lista este goala, asta inseamna ca nodul cap este NULL
+	if (cap == NULL)
+	{
+		//se aloca spatiu de memorie prin cap
+		cap = (nod*)malloc(sizeof(nod));
+		//se adauga informatia dorita pe acest nod
+		cap->info = info;
+		//urmatorul element din lista este NULL, deoarece lista este goala
+		cap->next = NULL;
+	}
+	else
+	{
+		//folosim varibila cursor pointer de nod pentru a parcurge toata lista pana la ultimul element
+		nod* cursor = cap;
+		//cursorul este ultimul element daca variabila next din acest nod este NULL
+		while (cursor->next != NULL)
+		{
+			cursor = cursor->next;//poate sa treaca la ultimul element sa l verficie daca este null
+		}
+		//alocam spatiu de memorie pentru noul nod
+		nod* nou = (nod*)malloc(sizeof(nod));
+		//acest nod fiind adugat la finalul listei legatura sa (next) este NULL
+		nou->next = NULL;
+		//se ataseaza informatia noului nod
+		nou->info = info;
+		//se ataseaza noul nod catre pointer 'next' al variabilei cursor
+		cursor->next = nou;
+	}
+	return cap;
+}
+
+nod* stergere_element(nod* cap)
+{
+	//daca nu avem elemente in lista nu putem sa stergem nimic, logic, n avem ce sa stergem
+	if (cap == NULL)
+	{
+		return NULL;
+	}
+	//daca avem un singur element in lista, atunci pointerul cap trebuie dezalocat si devine NULL
+	else if (cap->next = NULL)
+	{
+		free(cap);
+		return NULL;
+	}
+	else
+	{
+		//se utilizeaza variabila cursor pentru a parcurge lista si a ne pozitiona pe penultimul element
+		//Trebuie sa ne pozitionam pe penultimul element ca sa putem rupe legatura fata de ultimul element
+		//daca ne pozitionam pe ultimul element nu putem rupe legatura nestiind care este adresa penultimului element
+		nod* cursor = cap;
+		//cursor->next - ofera urmatorul element, iar cursor->next->next ofera nextul urmatorului element, cum ar veni sare peste un element si ajunge la al doilea, de la 1 ajunge la 3, evitand 2
+		while (cursor->next->next != NULL)//sa vedem daca ultimul element este null
+		{
+			cursor = cursor->next;
+		}
+		//se utilizeaza o alta variabila de tip nod*(ultim) pentru a izola, cum ne izolam noi de corona acum, ultimul element al listei
+		//este esential sa se retina in aceasta vatiabila ultimul element pentru a putea mapa next-ul penultimului cu NULL
+		nod* ultim = cursor->next;
+		//se rupe legatura fata de ultimul element
+		cursor->next = NULL;
+		//se dezaloca memoria ultimului element si devine null
+		free(ultim);
+		return cap;
+	}
+}
+int nr_noduri(nod* cap)
+{
+	int nr = 0;
+	nod* cursor = cap;
+	while (cursor)
+	{
+		cursor = cursor->next;
+		nr++;
+	}
+	return nr;
+}
+
+int inserare_elemente_pozitie(nod* &cap, angajat a, int poz)
+{
+	int rezultat = 0;
+	int nr = nr_noduri(cap);
+	printf("\nLista are %d elemente", nr);
+	if ((poz < 0) || (poz > nr))//daca pozitia nu esste pozitiva sau daca este mai mare decat nr atunci nu se face inserarea
+	{
+		rezultat = -1;
+	}
+	//alocam spatiul si informatia pentru noul nod
+	nod* nou = (nod*)malloc(sizeof(nod));
+	nou->info = a;
+	if (poz == 0)//daca doresc sa inserez pe pozitia 0, atunci trebuie sa schimb valoarea pointerului cap care specifica primul element al listei
+	{
+		nou->next = cap;
+		cap = nou;
+		rezultat = 1;
+	}
+	else
+	{
+		int contor = 0;
+		nod* cursor = cap;
+		//parcurg lista prin intermediul unui pointer auxiliar (cursor) pana pe elementul aflat inaintea pozitiei in care dorim inserarea
+		//procedam astfel pentru a putea reface legaturile, pointerul next al pozitie -1 ar trebuie sa fie catre noul element,
+		//iar nextul noului element ce se afla in momentul de fata in nextul elementului de pe pozitie -1
+		while (cursor->next != NULL && contor < poz - 1)
+		{
+			cursor = cursor->next;
+			contor++;
+		}
+		//fac legaturile. Ordinea este estentiala, altfel se pierde structura listei
+		nou->next = cursor->next;
+		cursor->next = cap;
+		rezultat = 1;
+	}
+	return rezultat;
+}
+
+int stergere_pozitie(nod* cap, int pozitie) //sunt aceleasi explicatie ca la inserare
+{
+	int rezultat = 0;
+	int nr = nr_noduri(cap);
+	if ((pozitie >= nr) || (pozitie < 0)) { //verificam la fel daca este unde trebuie
+		rezultat = -1;
+	}
+	nod* cursor;
+	if (pozitie == 0) //ca sa stergem de pe pozitia 0
+	{
+		cursor = cap;
+		cap = cap->next;
+		free(cursor);//eliberam memoria si afiseaza rezultatul ca nu se afla pe pozitia 0 si intra in validarea de la if
+		rezultat = -1;
+	}
+	else
+	{
+		int contor = 0;
+		cursor = cap;
+		while (contor < pozitie - 1) //aici nu mai verificam daca urmatorul element al listei este null
+		{
+			cursor = cursor->next;
+			contor++;
+		}
+		nod* eliminat = cursor->next;
+		cursor->next = eliminat->next;
+		free(eliminat);
+		rezultat = 1;
+	}
+	return rezultat;
+}
+
+void main()
+{
+	nod* cap = NULL;
+	cap = creare_lista();
+	traversare_lista(cap);
+	cap = stergere_element(cap);
+	traversare_lista(cap);
+	angajat a = citire_angajat_tastatura();
+	cap = inserare_element(cap, a);
+	traversare_lista(cap);
+	int pozitie;
+	printf("\Introduceti pozitia: ");
+	scanf_s("%d", &pozitie);
+	int rez = inserare_elemente_pozitie(cap, a, pozitie);
+	traversare_lista(cap);
+	printf("\nIntroduceti pozitia: ");
+	scanf_s("%d", &pozitie);
+	rez = stergere_pozitie(cap, pozitie);
+	traversare_lista(cap);
+}
